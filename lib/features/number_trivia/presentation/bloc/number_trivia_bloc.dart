@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:tdd_learn/core/error/failure.dart';
 import 'package:tdd_learn/core/usecase/usecase.dart';
@@ -63,10 +64,7 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
           final failureOrTrivia = await getConcreteNumberTriviaUsecase(
             Params(number: integer),
           );
-          yield failureOrTrivia.fold(
-            (failure) => Error(message: _mapFailureToMessage(failure)),
-            (trivia) => Loaded(trivia: trivia),
-          );
+          yield* _eitherLoadedOrErrorState(failureOrTrivia);
         },
       );
     }
@@ -76,12 +74,18 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
       final failureOrTrivia = await getRandomNumberTriviaUsecase(
         NoParams(),
       );
-      yield failureOrTrivia.fold(
-        (failure) => Error(message: _mapFailureToMessage(failure)),
-        (trivia) => Loaded(trivia: trivia),
-      );
+      yield* _eitherLoadedOrErrorState(failureOrTrivia);
     }
   }
+}
+
+Stream<NumberTriviaState> _eitherLoadedOrErrorState(
+  Either<Failure, NumberTrivia> either,
+) async* {
+  yield either.fold(
+    (failure) => Error(message: _mapFailureToMessage(failure)),
+    (trivia) => Loaded(trivia: trivia),
+  );
 }
 
 String _mapFailureToMessage(Failure failure) {
