@@ -13,7 +13,7 @@ class NumberTriviaModel extends NumberTrivia
           text: text,
           number: number,
         );
-
+  
   // FromJSON 
   factory NumberTriviaModel.fromJson(Map<String, dynamic> json) {
     return NumberTriviaModel(

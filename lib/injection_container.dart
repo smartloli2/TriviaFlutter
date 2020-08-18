@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tdd_learn/features/number_trivia/presentation/bloc/number_trivia_bloc.dart';
 
+import 'core/network/network_info.dart';
 import 'core/util/input_converter.dart';
 import 'features/number_trivia/data/datasources/number_trivia_local_data_source.dart';
 import 'features/number_trivia/data/datasources/number_trivia_remote_data_source.dart';
@@ -52,6 +53,7 @@ Future<void> init() async {
 
   //! Core
   sl.registerLazySingleton(() => InputConverter());
+  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
 
   //! External
   final sharedPreferences     = await SharedPreferences.getInstance();
